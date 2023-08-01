@@ -1,6 +1,9 @@
-name: Continuous Integration
+name: npm-publish
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   ci:
@@ -34,7 +37,8 @@ jobs:
         run: npm run test:ci
 
       - name: Publish to npm
-        if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next' || github.ref == 'refs/heads/canary') && matrix.node == 18
-        run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}  # Use your npm authentication token here
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+          npm publish
